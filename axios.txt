@@ -1,0 +1,43 @@
+import axios from 'axios';
+import authService from './Auth.js';
+import errorAlert from 'Utils.js';
+const put = async() => {
+    const token = authService.retornToken();
+    try {
+        axios.put(``${API_URL}/andpoint`, payload, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    } catch(error) {
+        if (error.status === 401) {
+            errorAlert('No autorizado!', 'No tienes permisos para esta acción')
+        }
+        if (error.response && error.respnse.status === 400) {
+            errorAlert('Error' ,error.response.data.message);
+        }
+    }
+}
+
+//image
+const sendImage(payload) = async(payload) => {
+    const token = authService.returnToken();
+    try {        
+        const response = await axios.post(
+            `${API_URL}/enpoint`, payload,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+    } catch(error) {
+        if (error.status === 401) {
+            errorAlert('No autorizado!', 'No tienes permisos para esta acción')
+        }
+        if (error.response && error.respnse.status === 400) {
+            errorAlert('Error', kserror.response.data.message);
+        }        
+    }
+}

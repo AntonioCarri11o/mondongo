@@ -1,0 +1,28 @@
+public Usuario actualizarUsuario(ActualizarHuespedDTO huespedDTO) throws Exception {
+        ValidatorFactory fabrica = Validation.buildDefaultValidatorFactory();
+        Validator validador = fabrica.getValidator();
+        Set<ConstraintViolation<ActualizarHuespedDTO>> errores = validador.validate(huespedDTO);
+        if (!errores.isEmpty()) {
+            throw new ConstraintViolationException(errores);
+        }
+        String correo = obtenerCorreoUsuarioActual();
+        Optional<Usuario> usuarioOpcional = usuarioRepositorio.findUsuarioByCorreo(correo);
+        if (usuarioOpcional.isEmpty()) {
+            throw new EntityNotFoundException("Usuario no encontrado");
+        }
+        Usuario usuario = usuarioOpcional.get();
+        if (!usuario.getTelefono().equals(huespedDTO.getTelefono())) {
+            Optional<Usuario> usuarioTelefono  = usuarioRepositorio.findUsuarioByTelefono(huespedDTO.getTelefono());
+            if (!usuarioTelefono.isEmpty()) {
+                throw new ReglaNegocioExcepcion("El número de teléfono pertenece a otro usuario");
+            }
+        }
+        usuario = huespedDTO.actualizarUsuario(usuario);
+        return usuarioRepositorio.save(usuario);
+    }
+
+    public String obtenerCorreoUsuarioActual() {
+        ServletRequestAttributes atributos = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        String correo = (String) atributos.getAttribute("usuarioActual", ServletRequestAttributes.SCOPE_REQUEST);
+        return correo;
+    }

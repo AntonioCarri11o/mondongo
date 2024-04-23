@@ -1,0 +1,8 @@
+const guardarAutenticacionToken = (token) => {
+    const decodificado = jwtDecode(token);
+    const rol = decodificado.ROLES[0].authority;
+
+    localStorage.setItem("correo", decodificado.sub);
+    localStorage.setItem("token", token);
+    localStorage.setItem("rol_usuario", rol);
+}

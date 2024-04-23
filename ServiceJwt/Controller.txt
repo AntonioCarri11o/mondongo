@@ -1,0 +1,20 @@
+@RestController
+@RequestMapping("/auth")
+@CrossOrigin(origins = {"*"})
+
+ @PostMapping("/generateToken")
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+        try{
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+            if (authentication.isAuthenticated()) {
+                String token = jwtService.generateToken(authRequest.getUsername());
+                System.out.println("Token: " + token);
+                return token;
+            } else {
+                throw new UsernameNotFoundException("invalid user request !");
+            }
+        }catch (Exception e){
+            throw new UsernameNotFoundException("invalid user request !");
+        }
+
+    }
